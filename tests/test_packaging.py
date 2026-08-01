@@ -103,3 +103,27 @@ def test_main_release_workflow_publishes_windows_distribution() -> None:
     assert "dist/DeskScribe.exe" in workflow
     assert "dist/DeskScribe-*-windows-x64.zip" in workflow
     assert "dist/DeskScribe-*-windows-x64.zip.sha256" in workflow
+
+
+def test_release_workflow_refuses_to_reuse_an_existing_version_tag() -> None:
+    workflow = (
+        PROJECT_ROOT / ".github" / "workflows" / "release-windows.yml"
+    ).read_text(encoding="utf-8")
+
+    assert "git ls-remote --tags origin" in workflow
+    assert 'refs/tags/$tag"' in workflow
+    assert "exit 1" in workflow
+
+
+def test_version_check_workflow_blocks_prs_to_main_without_a_version_bump() -> None:
+    workflow = (PROJECT_ROOT / ".github" / "workflows" / "version-check.yml").read_text(
+        encoding="utf-8"
+    )
+
+    assert "pull_request:" in workflow
+    assert "branches:" in workflow
+    assert "- main" in workflow
+    assert "actions/setup-python" in workflow
+    assert "tomllib.load" in workflow
+    assert 'pr_version" = "$main_version"' in workflow
+    assert "exit 1" in workflow

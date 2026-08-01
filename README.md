@@ -129,8 +129,12 @@ Windows上で次を実行すると、Pythonを別途必要としない配布ZIP�
 モデルフォルダーを選択します。詳しくは
 [`WINDOWS_DISTRIBUTION.md`](WINDOWS_DISTRIBUTION.md)を参照してください。
 
-GitHubでは、`v` で始まるタグ（例: `v0.1.0`）をプッシュすると、Windows配布物を
-ビルドして同名のReleaseへ `DeskScribe.exe`、配布ZIP、ZIPのSHA-256を公開します。
+GitHubでは、`main` ブランチへプッシュ（PRのマージなど）されると、Windows配布物を
+ビルドし、`pyproject.toml` の `version` から作った `vX.Y.Z` タグのReleaseへ
+`DeskScribe.exe`、配布ZIP、ZIPのSHA-256を公開します。`main` 向けPRでは
+`version` が更新されているかを確認するチェックが走り、更新されていない場合は
+マージできません。リリースするときは、マージ前に `pyproject.toml` の
+`version` を更新してください。
 
 ## 設定キャッシュと設定メニュー
 
