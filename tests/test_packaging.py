@@ -98,7 +98,8 @@ def test_main_release_workflow_publishes_windows_distribution() -> None:
     assert "- main" in workflow
     assert "scripts\\build_windows.ps1" in workflow
     assert "softprops/action-gh-release" in workflow
-    assert "importlib.metadata.version('deskscribe')" in workflow
+    assert "tomllib.loads" in workflow
+    assert "pyproject.toml" in workflow
     assert "dist/DeskScribe.exe" in workflow
     assert "dist/DeskScribe-*-windows-x64.zip" in workflow
     assert "dist/DeskScribe-*-windows-x64.zip.sha256" in workflow

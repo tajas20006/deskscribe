@@ -39,7 +39,7 @@ jobs:
       - name: Get version
         id: version
         run: |
-          $ver = (uv run python -c "import importlib.metadata; print(importlib.metadata.version('deskscribe'))")
+          $ver = (uv run python -c "import pathlib, tomllib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])")
           echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
 
       - name: Create release
