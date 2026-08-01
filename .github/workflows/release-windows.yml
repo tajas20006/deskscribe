@@ -23,6 +23,21 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      - name: Get version
+        id: version
+        run: |
+          $ver = (uv run python -c "import pathlib, tomllib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])")
+          echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
+
+      - name: Ensure release tag does not already exist
+        run: |
+          $tag = "v${{ steps.version.outputs.VERSION }}"
+          $existing = git ls-remote --tags origin "refs/tags/$tag"
+          if ($existing) {
+            Write-Error "タグ $tag は既に存在します。pyproject.toml の version を更新してから main へプッシュしてください。"
+            exit 1
+          }
+
       - name: Build Windows distribution
         run: .\scripts\build_windows.ps1
 
@@ -35,12 +50,6 @@ jobs:
             dist/DeskScribe-*-windows-x64.zip
             dist/DeskScribe-*-windows-x64.zip.sha256
           retention-days: 90
-
-      - name: Get version
-        id: version
-        run: |
-          $ver = (uv run python -c "import pathlib, tomllib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])")
-          echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
 
       - name: Create release
         uses: softprops/action-gh-release@v3
