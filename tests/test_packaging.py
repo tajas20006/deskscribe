@@ -56,6 +56,16 @@ def test_build_script_packages_executable_in_a_checksummed_zip() -> None:
     assert "Get-FileHash" in script
 
 
+def test_build_script_validates_the_flet_client_cache_path() -> None:
+    script = (PROJECT_ROOT / "scripts" / "build_windows.ps1").read_text(
+        encoding="utf-8"
+    )
+
+    assert "flet_desktop.ensure_client_cached()" in script
+    assert "shutil.copytree(source, destination)" in script
+    assert "Staged Flet desktop client executable was not found" in script
+
+
 def test_distribution_guide_keeps_whisper_model_external() -> None:
     guide = (PROJECT_ROOT / "WINDOWS_DISTRIBUTION.md").read_text(encoding="utf-8")
 
@@ -64,28 +74,31 @@ def test_distribution_guide_keeps_whisper_model_external() -> None:
     assert "同梱されていません" in guide
 
 
-def test_ci_workflow_runs_locked_lint_and_tests() -> None:
+def test_ci_workflow_matches_neko2020_style_lint_coverage_and_tests() -> None:
     workflow = (PROJECT_ROOT / ".github" / "workflows" / "ci.yml").read_text(
         encoding="utf-8"
     )
 
     assert "pull_request:" in workflow
     assert "push:" in workflow
+    assert "branches:" in workflow
+    assert "- develop" in workflow
     assert "uv sync --frozen" in workflow
-    assert "uv run pytest" in workflow
+    assert "uv run --with pytest-cov pytest --cov=deskscribe" in workflow
     assert "uv run ruff check deskscribe tests main.py" in workflow
-    assert "uv run ruff format --check deskscribe tests main.py" in workflow
+    assert "codecov/codecov-action@v7" in workflow
 
 
-def test_tag_release_workflow_publishes_windows_distribution() -> None:
+def test_main_release_workflow_publishes_windows_distribution() -> None:
     workflow = (
         PROJECT_ROOT / ".github" / "workflows" / "release-windows.yml"
     ).read_text(encoding="utf-8")
 
-    assert "tags:" in workflow
-    assert '"v*"' in workflow
+    assert "branches:" in workflow
+    assert "- main" in workflow
     assert "scripts\\build_windows.ps1" in workflow
     assert "softprops/action-gh-release" in workflow
+    assert "importlib.metadata.version('deskscribe')" in workflow
     assert "dist/DeskScribe.exe" in workflow
     assert "dist/DeskScribe-*-windows-x64.zip" in workflow
     assert "dist/DeskScribe-*-windows-x64.zip.sha256" in workflow
