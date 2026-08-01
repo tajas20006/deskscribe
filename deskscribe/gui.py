@@ -1,6 +1,7 @@
 """Flet desktop GUI for private local transcription."""
 
 import asyncio
+import os
 from pathlib import Path
 from queue import Empty, SimpleQueue
 from typing import Any
@@ -27,6 +28,8 @@ from deskscribe.settings import (
 )
 from deskscribe.text import ReplacementRuleError, parse_replacement_rules
 from deskscribe.transcription import FasterWhisperTranscriber
+
+CLOSE_TIMEOUT_SECONDS = 20.0
 
 
 def format_duration(seconds: float) -> str:
@@ -921,6 +924,16 @@ class TranscriptionGUI:
         if self._closed:
             return
         self._closed = True
+        try:
+            await asyncio.wait_for(self._shutdown(), timeout=CLOSE_TIMEOUT_SECONDS)
+        except TimeoutError:
+            # A capture thread stuck inside a native WASAPI call can outlive its
+            # join timeout and never return control to Python. Cancelling this
+            # coroutine would not stop that thread, so force the process to exit
+            # instead of leaving it running forever after the window closes.
+            os._exit(1)
+
+    async def _shutdown(self) -> None:
         await asyncio.to_thread(self._stop_preview)
         if self._recording and self._session is not None:
             await asyncio.to_thread(self._session.stop)

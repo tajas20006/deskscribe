@@ -4,6 +4,7 @@ from typing import ClassVar
 
 import flet as ft
 
+from deskscribe import gui
 from deskscribe.audio import (
     DESKTOP,
     MICROPHONE,
@@ -572,3 +573,53 @@ def test_successful_save_shows_the_transcript_link(tmp_path: Path) -> None:
 
     assert app.open_transcript_button.visible is True
     assert app._saved_transcript_path == transcript_path
+
+
+def test_close_runs_shutdown_without_forcing_exit_when_it_finishes_in_time(
+    monkeypatch,
+) -> None:
+    app = TranscriptionGUI(FakePage())  # type: ignore[arg-type]
+    calls: list[str] = []
+
+    async def fake_shutdown() -> None:
+        calls.append("shutdown")
+
+    monkeypatch.setattr(app, "_shutdown", fake_shutdown)
+    monkeypatch.setattr(gui.os, "_exit", lambda code: calls.append(f"exit-{code}"))
+
+    asyncio.run(app._close())
+
+    assert calls == ["shutdown"]
+
+
+def test_close_forces_process_exit_when_shutdown_hangs_past_the_timeout(
+    monkeypatch,
+) -> None:
+    app = TranscriptionGUI(FakePage())  # type: ignore[arg-type]
+    monkeypatch.setattr(gui, "CLOSE_TIMEOUT_SECONDS", 0.01)
+
+    async def hanging_shutdown() -> None:
+        await asyncio.sleep(10)
+
+    monkeypatch.setattr(app, "_shutdown", hanging_shutdown)
+    exit_codes: list[int] = []
+    monkeypatch.setattr(gui.os, "_exit", exit_codes.append)
+
+    asyncio.run(app._close())
+
+    assert exit_codes == [1]
+
+
+def test_close_is_a_no_op_when_already_closed(monkeypatch) -> None:
+    app = TranscriptionGUI(FakePage())  # type: ignore[arg-type]
+    app._closed = True
+    calls: list[str] = []
+
+    async def fake_shutdown() -> None:
+        calls.append("shutdown")
+
+    monkeypatch.setattr(app, "_shutdown", fake_shutdown)
+
+    asyncio.run(app._close())
+
+    assert calls == []
