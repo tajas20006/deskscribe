@@ -1,0 +1,25 @@
+[project]
+name = "deskscribe"
+version = "0.1.0"
+description = "Private local desktop transcription GUI"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "faster-whisper>=1.2.1",
+    "flet[all]>=0.86.4",
+    "numpy>=2.3",
+    "ollama>=0.6.2",
+    "soundcard>=0.4.6",
+    "sounddevice>=0.5.5",
+]
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.15",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.16.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

@@ -1,4 +1,4 @@
-# AutoTExtract
+# DeskScribe
 
 デスクトップ音声とマイク音声を同時に取得し、ローカルの
 faster-whisperモデルで文字起こしするFlet製デスクトップGUIです。
@@ -124,7 +124,7 @@ Windows上で次を実行すると、Pythonを別途必要としない配布ZIP�
 .\scripts\build_windows.ps1
 ```
 
-生成物には `AutoTExtract.exe`、利用手順、依存ライブラリのライセンス、SHA-256
+生成物には `DeskScribe.exe`、利用手順、依存ライブラリのライセンス、SHA-256
 チェックサムが含まれます。音声認識モデルは同梱されないため、利用者が起動後にローカル
 モデルフォルダーを選択します。詳しくは
 [`WINDOWS_DISTRIBUTION.md`](WINDOWS_DISTRIBUTION.md)を参照してください。
@@ -137,8 +137,8 @@ GUIで選択した保存先フォルダ、ローカルモデルフォルダ、�
 ユーザーのホームディレクトリ配下へ保存します。
 
 ```text
-$XDG_CACHE_HOME/autotextract/settings.json
-~/.cache/autotextract/settings.json
+$XDG_CACHE_HOME/deskscribe/settings.json
+~/.cache/deskscribe/settings.json
 ```
 
 保存済みのモデルフォルダが存在する場合は、起動後にバックグラウンドで
