@@ -71,6 +71,7 @@ def test_open_file_uses_the_windows_default_application(
     monkeypatch.setattr(
         "deskscribe.output.os.startfile",
         lambda value: opened.append(value),
+        raising=False,
     )
 
     open_file(path)
