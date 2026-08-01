@@ -93,6 +93,7 @@ try {
         throw "Built executable was not found: $executable"
     }
     Copy-Item -LiteralPath $executable -Destination $releaseDir
+    Copy-Item -LiteralPath "LICENSE" -Destination $releaseDir
     Copy-Item -LiteralPath "WINDOWS_DISTRIBUTION.md" -Destination $releaseDir
     Copy-Item -LiteralPath "THIRD_PARTY_LICENSES.md" -Destination $releaseDir
 

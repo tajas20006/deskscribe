@@ -44,4 +44,5 @@ SHA-256チェックサムを確認してから実行してください。不明�
 - マイク利用権限
 - GPU推論を選ぶ場合は、対応するNVIDIAドライバーとCUDAランタイム
 
-詳しい依存ライブラリのライセンスは `THIRD_PARTY_LICENSES.md` を参照してください。
+DeskScribe本体の利用条件は `LICENSE`、詳しい依存ライブラリのライセンスは
+`THIRD_PARTY_LICENSES.md` を参照してください。

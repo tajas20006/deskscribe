@@ -3,6 +3,7 @@ name = "deskscribe"
 version = "0.1.0"
 description = "Private local desktop transcription GUI"
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.14"
 dependencies = [
     "faster-whisper>=1.2.1",

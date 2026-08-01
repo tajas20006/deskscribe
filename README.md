@@ -229,3 +229,7 @@ uv sync
 ### ブラウザから取得する場合
 
 [faster-whisper-small の Files](https://huggingface.co/Systran/faster-whisper-small/tree/main) から、すべてのファイルを同じフォルダへ保存してください。特に `model.bin`、`config.json`、`tokenizer.json` が必要です。
+
+## ライセンス
+
+DeskScribeは[MIT License](LICENSE)の下で提供されています。依存ライブラリにはそれぞれのライセンスが適用されます。詳細は[`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md)を参照してください。
