@@ -129,6 +129,9 @@ Windows上で次を実行すると、Pythonを別途必要としない配布ZIP�
 モデルフォルダーを選択します。詳しくは
 [`WINDOWS_DISTRIBUTION.md`](WINDOWS_DISTRIBUTION.md)を参照してください。
 
+GitHubでは、`v` で始まるタグ（例: `v0.1.0`）をプッシュすると、Windows配布物を
+ビルドして同名のReleaseへ `DeskScribe.exe`、配布ZIP、ZIPのSHA-256を公開します。
+
 ## 設定キャッシュと設定メニュー
 
 GUIで選択した保存先フォルダ、ローカルモデルフォルダ、デスクトップ音声

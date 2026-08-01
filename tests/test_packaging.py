@@ -62,3 +62,30 @@ def test_distribution_guide_keeps_whisper_model_external() -> None:
     assert "DeskScribe.exe" in guide
     assert "モデル" in guide
     assert "同梱されていません" in guide
+
+
+def test_ci_workflow_runs_locked_lint_and_tests() -> None:
+    workflow = (PROJECT_ROOT / ".github" / "workflows" / "ci.yml").read_text(
+        encoding="utf-8"
+    )
+
+    assert "pull_request:" in workflow
+    assert "push:" in workflow
+    assert "uv sync --frozen" in workflow
+    assert "uv run pytest" in workflow
+    assert "uv run ruff check deskscribe tests main.py" in workflow
+    assert "uv run ruff format --check deskscribe tests main.py" in workflow
+
+
+def test_tag_release_workflow_publishes_windows_distribution() -> None:
+    workflow = (
+        PROJECT_ROOT / ".github" / "workflows" / "release-windows.yml"
+    ).read_text(encoding="utf-8")
+
+    assert "tags:" in workflow
+    assert '"v*"' in workflow
+    assert "scripts\\build_windows.ps1" in workflow
+    assert "softprops/action-gh-release" in workflow
+    assert "dist/DeskScribe.exe" in workflow
+    assert "dist/DeskScribe-*-windows-x64.zip" in workflow
+    assert "dist/DeskScribe-*-windows-x64.zip.sha256" in workflow
