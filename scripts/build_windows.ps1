@@ -43,23 +43,32 @@ try {
         }
     }
 
-    $fletClientRoot = (
-        uv run python -c "import flet_desktop; print(flet_desktop.ensure_client_cached())"
-    ).Trim()
+    $prepareFletClient = @'
+import shutil
+import sys
+from pathlib import Path
+
+import flet_desktop
+
+source_root = flet_desktop.ensure_client_cached()
+if source_root is None:
+    raise RuntimeError("Flet desktop client preparation did not return a cache directory.")
+
+source = Path(source_root) / "flet"
+if not (source / "flet.exe").is_file():
+    raise FileNotFoundError(f"Flet desktop client executable was not found: {source}")
+
+destination = Path(sys.argv[1])
+shutil.rmtree(destination, ignore_errors=True)
+shutil.copytree(source, destination)
+'@
+    uv run python -c $prepareFletClient $stagedClient
     if ($LASTEXITCODE -ne 0) {
         throw "Flet desktop client preparation failed."
     }
-    $fletClientBinaryDir = Join-Path $fletClientRoot "flet"
-    if (-not (Test-Path (Join-Path $fletClientBinaryDir "flet.exe"))) {
-        throw "Flet desktop client executable was not found: $fletClientBinaryDir"
+    if (-not (Test-Path (Join-Path $stagedClient "flet.exe"))) {
+        throw "Staged Flet desktop client executable was not found: $stagedClient"
     }
-
-    if (Test-Path $stagedClient) {
-        Remove-Item -LiteralPath $stagedClient -Recurse -Force
-    }
-    New-Item -ItemType Directory -Force $stagedClient | Out-Null
-    Copy-Item -Path (Join-Path $fletClientBinaryDir "*") `
-        -Destination $stagedClient -Recurse -Force
 
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = "Continue"

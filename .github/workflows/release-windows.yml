@@ -1,6 +1,7 @@
 name: Release Windows
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "v*"
@@ -40,6 +41,7 @@ jobs:
             dist/DeskScribe-*-windows-x64.zip.sha256
 
       - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v3
         with:
           name: ${{ github.ref_name }}

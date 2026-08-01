@@ -56,6 +56,16 @@ def test_build_script_packages_executable_in_a_checksummed_zip() -> None:
     assert "Get-FileHash" in script
 
 
+def test_build_script_validates_the_flet_client_cache_path() -> None:
+    script = (PROJECT_ROOT / "scripts" / "build_windows.ps1").read_text(
+        encoding="utf-8"
+    )
+
+    assert "flet_desktop.ensure_client_cached()" in script
+    assert "shutil.copytree(source, destination)" in script
+    assert "Staged Flet desktop client executable was not found" in script
+
+
 def test_distribution_guide_keeps_whisper_model_external() -> None:
     guide = (PROJECT_ROOT / "WINDOWS_DISTRIBUTION.md").read_text(encoding="utf-8")
 
@@ -84,8 +94,10 @@ def test_tag_release_workflow_publishes_windows_distribution() -> None:
 
     assert "tags:" in workflow
     assert '"v*"' in workflow
+    assert "workflow_dispatch:" in workflow
     assert "scripts\\build_windows.ps1" in workflow
     assert "softprops/action-gh-release" in workflow
+    assert "if: startsWith(github.ref, 'refs/tags/v')" in workflow
     assert "dist/DeskScribe.exe" in workflow
     assert "dist/DeskScribe-*-windows-x64.zip" in workflow
     assert "dist/DeskScribe-*-windows-x64.zip.sha256" in workflow
